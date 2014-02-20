@@ -1,0 +1,7 @@
+Xfitsview for Xfree86-OS/2 will only run on 8 bpp displays. This is a limitation of the original code .
+You will not be able to change drives unless you use the Toronto Virtual File System (TVFS)
+which replicates unix style handling of multiple drives on OS/2.
+this archive contains both the executable and the source code for Xfitsview
+
+Duncan Munro
+dmunro@sfu.ca

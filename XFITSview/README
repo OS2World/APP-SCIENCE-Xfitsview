@@ -1,0 +1,74 @@
+                          XFITSview
+-----------------------------------------------------------------------
+  Copyright (C) 1996
+  Associated Universities, Inc. Washington DC, USA.
+  This program is free software; you can redistribute it and/or
+  modify it under the terms of the GNU General Public License as
+  published by the Free Software Foundation; either version 2 of
+  the License, or (at your option) any later version.
+
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+
+  Correspondence concerning XFITSview should be addressed as follows:
+         Internet email: bcotton@nrao.edu.
+         Postal address: William Cotton
+                         National Radio Astronomy Observatory
+                         520 Edgemont Road
+                         Charlottesville, VA 22903-2475 USA
+-----------------------------------------------------------------------*/
+
+   XFITSview is a viewer for FITS format images for unix/X-Windows
+systems.  XFITSview will display images allowing zooming, scrolling,
+modifying the brightness, contrast and color and allow determination
+of celestial positions in the image.  Positions and brightnesses of
+selected pixels may be logged to a text file.  Specified positions in
+the image may be marked.  Images may be compared by "blinking" them
+and 3 dimensional images may be viewed in the form of a movie.  The
+program contains extensive online documentation.  Blanked pixels and
+all defined FITS image data types are supported.  Normal or gzip
+compressed files may be used.
+
+ Installation
+ ------------
+   
+    Installation of XFITSview requires an ansi c compiler and the
+Motif package of software for the X-Windows system (not included in
+this distribution).  After expanding the tar archive change to
+directory XFITSview.  The make file "Makefile" may need to be modified
+to give the particulars of your system.  The name of the c compiler
+and the locations of the X-Windows and Motif include and library
+directories must be supplied.  In addition, the variable BYTSORD gives
+the byte order of the machines for which you are building the
+executable.  A value of "big" is appropriate for "big endian"
+machines, e.g. (Sun, IBM RS/6000, SGI, HP).  A value of "little" is
+appropriate for "little endian" byte ordering (Linux, Dec Alpha).
+
+   After making any necessary modifications to the Makefile type make
+(or gmake) to build the executable.  When this procedure completes,
+copy the executable (XFITSview) to the directory in which it is to be
+installed. The XFITSview directory structure may be removed after
+successfully building and installing XFITSview.  XFITSview contains
+online documentation; a text version of this documentation is in the
+file XFITSview.hlp.
+
+Trouble shooting notes:
+1) If XFITSview appears to build and run except that the displayed
+image appears to be random noise, check that BYTEORD in the make file
+is set correctly.  To rebuild, first clear the old installation by
+% make clobber
+and then type "make" to rebuild.
+
+     Questions and comments should be directed to Bill Cotton
+at the National Radio Astronomy Observatory (bcotton@nrao.edu).
+
+Usage
+-----
+
+   XFITSview may be started with the name of a FITS format file as a
+command line argument.  Either the initial or subsequent files may be
+selected using the "Open" item in the "File" menu.  Consult the "Help
+Me" item in the "Help" menu for further details.  Each menu column has
+a separate help item.

@@ -1,0 +1,229 @@
+#-----------------------------------------------------------------------
+#  Copyright (C) 1996,1998
+#  Associated Universities, Inc. Washington DC, USA.
+#  This program is free software; you can redistribute it and/or
+#  modify it under the terms of the GNU General Public License as
+#  published by the Free Software Foundation; either version 2 of
+#  the License, or (at your option) any later version.
+#
+#  This program is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  GNU General Public License for more details.
+#
+#  You should have received a copy of the GNU General Public
+#  License along with this program; if not, write to the Free
+#  Software Foundation, Inc., 675 Massachusetts Ave, Cambridge,
+#  MA 02139, USA.
+#-----------------------------------------------------------------------
+# The following values may need to be changed to reflect your configuration.
+
+# Note an ansi c compatible compiler is required.
+CC = acc                               # Sun OS NRAO
+
+# CC is that name of the c compiler to use, some possibilities are suggested:
+#CC  = /opt/TESTspro/SUNWspro/bin/cc   # Solaris NRAO
+#CC  = /opt/SUNWspro/bin/cc            # Solaris
+#CC  = /usr/lang/acc                   # Sun OS
+#CC  = cc                              # Dec Alpha OSF/1 = Digital Unix
+#CC  = cc                              # IBM RS/6000
+#CC  = gcc                             # Linux
+#CC  = gcc                             # FreeBSD
+#CC  = cc                              # HP
+#CC  = cc                              # Dec
+#CC  = cc                              # SGI
+
+#   Include directories, need X-Windows and Motif as well as ./fitssubs
+#   Some X Window System implementations do not place their include in 
+#   the standard Unix directory /usr/include, some of these are listed below.
+#   For Sun, make sure OPENWINHOME is set!  (/usr/openwin usually)
+#   Motif includes are assumed in directory Xm parallel to the X11 include 
+#   directory, if this is not the case then INCDIROS should list the directory
+#   above the Motif includes (preceeded by -I).
+
+INCDIROS     = -I/local/X11R5/include/    # NRAO SunOS
+#INCDIROS     =                           # Dec Alpha OSF/1 = Digital Unix
+#INCDIROS     =                           # Dec
+#INCDIROS     =                           # IBM RS/6000
+#INCDIROS     =                           # Linux
+#INCDIROS     =                           # FreeBSD
+#INCDIROS     =                           # SGI
+#INCDIROS     = -I/usr/include/X11R5/ -I/usr/include/Motif1.2   # HP
+#INCDIROS     = -I$(OPENWINHOME)/include/ -I/opt/SUNWmotif/include # Solaris
+#INCDIROS     = -I$(OPENWINHOME)/include/ # Sun OS
+
+INCDIR = -I./fitssubs/ $(INCDIROS)
+
+# DEBUG is the debugger/optimizer flag, 
+# O is some general level of optimization
+DEBUG = -O
+
+# set compiler flags.  Add any other options as needed
+CFLAGS = $(DEBUG) $(INCDIR)
+# For Solaris try:
+#CFLAGS = $(DEBUG) $(INCDIR) -v -K PIC -Xc
+#for HP:
+#CFLAGS = $(DEBUG) -Aa $(INCDIR)
+
+# RANLIB points to ranlib if it's necessary and something innocuous otherwise
+# use the following for systems needing ranlib (SunOS, Linux, FreeBSD,
+# IBM RS/6000
+RANLIB = ranlib
+# if ranlib not needed/allowed (Solaris, HP, SGI)
+#RANLIB = echo no ranlib needed for
+
+# set linker flags.  Add other options as needed.
+# -s automatically strips (removes debugging information) the executable
+# For Solaris try:
+#LDFLAGS = -s -v -K PIC -Xc -R $(OPENWINHOME)/lib -R /opt/SUNWmotif/lib
+LDFLAGS = -s
+
+#   LIBDIR points to the X-windows and Motif link library directory(ies)
+#   Standard Unix libraries are usually found in /usr/lib; 
+#   some X Window System implementations place their libraries elsewhere.  
+
+LIBDIR = -L/local/X11R5/lib          # NRAO SunOS
+
+#   Some possibilities are suggested:
+#LIBDIR  = -L/usr/lib/X11            # Dec Alpha OSF/1 = Digital Unix
+#LIBDIR  = -L/usr/lib/X11            # Dec
+#LIBDIR  = -L/usr/lib/X11R5 -L/usr/lib/Motif1.2     # HP
+#LIBDIR  =                           # IBM RS/6000
+# For AIX 3.2.2 or earlier, use LIBDIR = -L/usr/lpp/X11/Xamples/lib
+#  if you have set up the X server to use MIT SHM shared memory.
+#LIBDIR   = -L/usr/X386/lib          # Linux
+#LIBDIR   = -L/usr/X11R6/lib         # FreeBSD
+#LIBDIR   =                          # SGI
+# on Solaris If you change LIBDIR, make sure to change LDFLAGS (-R argument)
+LIBDIR    = -L$(OPENWINHOME)/lib -L/usr/dt/lib -R /usr/dt/lib  # Solaris
+#LIBDIR    = -L$(OPENWINHOME)/lib    # Sun OS
+
+# Define libraries
+LIBS =  $(LIBDIR) -lXm -lXt -lXmu -lX11 -lXext -lm
+# for Solaris try
+#LIBS =  $(LIBDIR) -lXm -lXt -lXmu -lX11 -lXext -lm -lgen
+# for linux use the following for statically linked motif libraries
+#LIBS =  $(LIBDIR) -Wl,-Bstatic -lXm -lXpm  -Wl,-Bdynamic -lXt -lX11 -lXext -lSM -lICE -lX11 -lm
+# for HP try
+#LIBS =  $(LIBDIR) -lXm -lXt -lX11 -lXext -lm		# HP
+
+# BYTEORD is the byte order:
+BYTEORD = big    # for big endian machines (Sun, IBM RS/6000, HP, SGI)
+#BYTEORD = little # for little endian (PCs, Dec, Dec Alpha)
+
+#------------------------------------------------------------------------
+
+#  You shouldn't need to change anything below here.
+TARGETS= XFITSview
+
+# ARCHIVE is the name of the FITS archive
+ARCHIVE=XFITSview1.2.tar
+
+all:  $(TARGETS)
+
+fitslibrary:	fitssubs/myconfig.h
+	cd fitssubs; $(MAKE)  CC="$(CC)" CFLAGS="$(CFLAGS)" RANLIB="$(RANLIB)"
+
+fitssubs/myconfig.h: 
+	cp fitssubs/myconfig.h.$(BYTEORD) fitssubs/myconfig.h; 
+
+XFITSview: fitslibrary XFITSview.o library 
+	$(CC) $(LDFLAGS) -o $@ XFITSview.o libXFITSview.a fitssubs/libFITS.a $(LIBS)
+
+XFITSview.o: XFITSview.c xfitsview.h imagedisp.h FITS2Pix.h color.h infobox.h cursor.h scrolltext.h 
+	$(CC) -c $(CFLAGS) XFITSview.c
+
+libXFITSview.a: FITS2Pix.o color.o control.o toolbox.o imagedisp.o optionbox.o infobox.o markpos.o lookpos.o cursor.o moviebox.o blinkbox.o textfile.o scrolltext.o menu.o help.o logger.o messagebox.o
+	$(RANLIB) libXFITSview.a;
+ 
+library:	libXFITSview.a
+
+FITS2Pix.o: FITS2Pix.c xfitsview.h imagedisp.h 
+	$(CC) -c $(CFLAGS) FITS2Pix.c
+	ar r libXFITSview.a FITS2Pix.o
+
+color.o: color.c xfitsview.h imagedisp.h imagedisp.h color.h
+	$(CC) -c $(CFLAGS) color.c
+	ar r libXFITSview.a color.o
+
+control.o: control.c xfitsview.h imagedisp.h color.h optionbox.h control.h
+	$(CC) -c $(CFLAGS) control.c
+	ar r libXFITSview.a control.o
+
+toolbox.o: toolbox.c xfitsview.h imagedisp.h toolbox.h
+	$(CC) -c $(CFLAGS) toolbox.c
+	ar r libXFITSview.a toolbox.o
+
+imagedisp.o: imagedisp.c xfitsview.h imagedisp.h fitssubs/position.h
+	$(CC) -c $(CFLAGS) imagedisp.c
+	ar r libXFITSview.a imagedisp.o
+
+markpos.o: markpos.c markpos.h imagedisp.h fitssubs/position.h
+	$(CC) -c $(CFLAGS) markpos.c
+	ar r libXFITSview.a markpos.o
+
+lookpos.o: lookpos.c lookpos.h imagedisp.h fitssubs/position.h
+	$(CC) -c $(CFLAGS) lookpos.c
+	ar r libXFITSview.a lookpos.o
+
+optionbox.o: optionbox.c  xfitsview.h imagedisp.h FITS2Pix.h
+	$(CC) -c $(CFLAGS) optionbox.c
+	ar r libXFITSview.a optionbox.o
+
+infobox.o: infobox.c  xfitsview.h imagedisp.h infobox.h
+	$(CC) -c $(CFLAGS) infobox.c
+	ar r libXFITSview.a infobox.o
+
+cursor.o: cursor.c  definecursor.h
+	$(CC) -c $(CFLAGS) cursor.c
+	ar r libXFITSview.a cursor.o
+
+moviebox.o: moviebox.c  xfitsview.h imagedisp.h moviebox.h FITS2Pix.h fitssubs/position.h
+	$(CC) -c $(CFLAGS) moviebox.c
+	ar r libXFITSview.a moviebox.o
+
+blinkbox.o: blinkbox.c  xfitsview.h imagedisp.h blinkbox.h
+	$(CC) -c $(CFLAGS) blinkbox.c
+	ar r libXFITSview.a blinkbox.o
+
+textfile.o: textfile.c textfile.h
+	$(CC) -c $(CFLAGS) textfile.c
+	ar r libXFITSview.a textfile.o
+
+scrolltext.o: scrolltext.c  textfile.h scrolltext.h
+	$(CC) -c $(CFLAGS) scrolltext.c
+	ar r libXFITSview.a scrolltext.o
+
+menu.o: menu.c  xfitsview.h imagedisp.h menu.h
+	$(CC) -c $(CFLAGS) menu.c
+	ar r libXFITSview.a menu.o
+
+help.o: help.c  scrolltext.h help.h
+	$(CC) -c $(CFLAGS) help.c
+	ar r libXFITSview.a help.o
+
+logger.o: logger.c  textfile.h logger.h
+	$(CC) -c $(CFLAGS) logger.c
+	ar r libXFITSview.a logger.o
+
+messagebox.o: messagebox.c  scrolltext.h messagebox.h
+	$(CC) -c $(CFLAGS) messagebox.c
+	ar r libXFITSview.a messagebox.o
+
+distrib:
+	cd ..; rm -f $(ARCHIVE)
+	rm -f fitssubs/myconfig.h
+	cd ..; tar cvf $(ARCHIVE) XFITSview/Makefile* 
+	cd ..; tar uvf $(ARCHIVE) XFITSview/*.c XFITSview/*.h
+	cd ..; tar uvf $(ARCHIVE) XFITSview/README XFITSview/LICENSE
+	cd ..; tar uvf $(ARCHIVE) XFITSview/*.hlp XFITSview/changes
+	cd ..; tar uvf $(ARCHIVE) XFITSview/fitssubs/Makefile* 
+	cd ..; tar uvf $(ARCHIVE) XFITSview/fitssubs/*.c XFITSview/fitssubs/*.h
+	cd ..; tar uvf $(ARCHIVE) XFITSview/fitssubs/myconfig.* 
+	cd ..; tar uvf $(ARCHIVE) XFITSview/fitssubs/*.doc
+
+clobber:
+	cd fitssubs; $(MAKE) clobber; cd .. 
+	rm -f *.o *~* *.a 
+	rm -f $(TARGETS)
+
